@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cactus — UI Library Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --base:    #0d0e12;
+    --surf:    #13141a;
+    --raised:  #1c1d26;
+    --border:  #252636;
+    --accent:  #aaaaff;
+    --accent2: #6b6bcc;
+    --muted:   #6b6b8a;
+    --text:    #ddddf0;
+    --dim:     #9898b8;
+    --success: #6be09e;
+    --warn:    #e0c46b;
+    --err:     #e06b6b;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--base);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ───────────────────────────────── */
+  nav {
+    width: 224px;
+    min-width: 224px;
+    background: var(--surf);
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .nav-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+
+  .nav-logo .wordmark {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo .wordmark span {
+    color: var(--accent);
+  }
+
+  .nav-logo .version {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .nav-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 20px 6px;
+  }
+
+  nav a {
+    display: block;
+    padding: 5px 20px;
+    color: var(--dim);
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 400;
+    border-left: 2px solid transparent;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+
+  nav a:hover {
+    color: var(--text);
+    background: rgba(170,170,255,0.05);
+  }
+
+  nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(170,170,255,0.07);
+  }
+
+  /* ── MAIN ───────────────────────────────────── */
+  main {
+    flex: 1;
+    max-width: 860px;
+    padding: 48px 56px 120px;
+    overflow-x: hidden;
+  }
+
+  /* ── SECTIONS ───────────────────────────────── */
+  .doc-section {
+    margin-bottom: 72px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.4px;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  h3.method-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 36px 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h3.method-title .badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--base);
+    background: var(--accent2);
+    letter-spacing: 0.04em;
+  }
+
+  h3.method-title .badge.ret {
+    background: var(--success);
+  }
+
+  .method-desc {
+    font-size: 13px;
+    color: var(--dim);
+    margin-bottom: 12px;
+    max-width: 580px;
+    line-height: 1.7;
+  }
+
+  /* ── CODE BLOCKS ────────────────────────────── */
+  .code-block {
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 10px 0 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .code-block .cb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--raised);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-block .cb-lang {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .code-block .copy-all {
+    font-size: 10.5px;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 10px;
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: color 0.12s, border-color 0.12s;
+  }
+
+  .code-block .copy-all:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .code-block .copy-all.copied {
+    color: var(--success);
+    border-color: var(--success);
+  }
+
+  .code-lines {
+    padding: 14px 0;
+  }
+
+  .cl {
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    min-height: 22px;
+    position: relative;
+    transition: background 0.08s;
+  }
+
+  .cl:hover {
+    background: rgba(170,170,255,0.04);
+  }
+
+  .cl:hover .cl-copy {
+    opacity: 1;
+  }
+
+  .cl-num {
+    min-width: 28px;
+    color: var(--border);
+    font-size: 11px;
+    user-select: none;
+    text-align: right;
+    margin-right: 16px;
+    font-style: normal;
+  }
+
+  .cl-code {
+    flex: 1;
+    white-space: pre;
+    font-size: 12.5px;
+    font-family: var(--mono);
+    color: var(--text);
+  }
+
+  .cl-copy {
+    opacity: 0;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 7px;
+    font-size: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: opacity 0.1s, color 0.1s, border-color 0.1s;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+
+  .cl-copy:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .cl-copy.ok {
+    color: var(--success);
+    border-color: var(--success);
+    opacity: 1;
+  }
+
+  /* syntax colours */
+  .kw   { color: #c792ea; }
+  .fn   { color: #82aaff; }
+  .str  { color: #c3e88d; }
+  .num  { color: #f78c6c; }
+  .cmt  { color: #4a4a6a; font-style: italic; }
+  .var  { color: var(--text); }
+  .key  { color: var(--accent); }
+  .op   { color: var(--muted); }
+  .typ  { color: #ffcb6b; }
+
+  /* ── PARAMS TABLE ───────────────────────────── */
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 24px;
+    font-size: 12.5px;
+  }
+
+  .params-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 0 12px 8px 0;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  .params-table td {
+    padding: 7px 12px 7px 0;
+    border-bottom: 1px solid rgba(37,38,54,0.6);
+    vertical-align: top;
+    color: var(--dim);
+  }
+
+  .params-table td:first-child {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .params-table td .type-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    color: var(--warn);
+    margin-right: 4px;
+  }
+
+  .params-table td .opt {
+    color: var(--muted);
+    font-size: 10.5px;
+  }
+
+  /* ── FLAGS TABLE ────────────────────────────── */
+  .flags-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 24px;
+    font-size: 12.5px;
+  }
+
+  .flags-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 0 12px 8px 0;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  .flags-table td {
+    padding: 7px 12px 7px 0;
+    border-bottom: 1px solid rgba(37,38,54,0.6);
+    vertical-align: top;
+    color: var(--dim);
+    line-height: 1.6;
+  }
+
+  .flags-table td:first-child { color: var(--accent); font-weight: 500; }
+  .flags-table td:nth-child(2) { color: var(--warn); font-size: 11.5px; }
+
+  /* ── CALLOUTS ───────────────────────────────── */
+  .callout {
+    border-left: 3px solid var(--border);
+    padding: 12px 16px;
+    margin: 16px 0;
+    background: var(--surf);
+    border-radius: 0 6px 6px 0;
+    font-size: 12.5px;
+    color: var(--dim);
+    line-height: 1.7;
+  }
+
+  .callout.info  { border-left-color: var(--accent); }
+  .callout.warn  { border-left-color: var(--warn); }
+  .callout.tip   { border-left-color: var(--success); }
+
+  .callout strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── INLINE CODE ────────────────────────────── */
+  code {
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  /* ── DIVIDER ────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── HERO ───────────────────────────────────── */
+  .hero {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin-bottom: 18px;
+    letter-spacing: 0.04em;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .install-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    max-width: 560px;
+  }
+
+  .install-strip .label {
+    font-size: 10.5px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .install-strip .cmd {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .install-strip button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--mono);
+    white-space: nowrap;
+    transition: color 0.12s, border-color 0.12s;
+  }
+
+  .install-strip button:hover { color: var(--accent); border-color: var(--accent); }
+  .install-strip button.copied { color: var(--success); border-color: var(--success); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 768px) {
+    nav { display: none; }
+    main { padding: 32px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="wordmark">cac<span>tus</span></div>
+    <div class="version">v1.0 — Roblox UI Library</div>
+  </div>
+
+  <div class="nav-group-label">Getting Started</div>
+  <a href="#install">Installation</a>
+  <a href="#quickstart">Quick start</a>
+  <a href="#flags">Flags / Variables</a>
+
+  <div class="nav-group-label">Window</div>
+  <a href="#createwindow">CreateWindow</a>
+  <a href="#window-methods">Window methods</a>
+
+  <div class="nav-group-label">Tabs & Sections</div>
+  <a href="#addtab">AddTab</a>
+  <a href="#addsubtab">AddSubTab</a>
+  <a href="#addsection">AddSection</a>
+
+  <div class="nav-group-label">Components</div>
+  <a href="#addtoggle">AddToggle</a>
+  <a href="#addslider">AddSlider</a>
+  <a href="#adddropdown">AddDropdown</a>
+  <a href="#addbutton">AddButton</a>
+  <a href="#addkeybind">AddKeybind</a>
+  <a href="#addcolorpicker">AddColorPicker</a>
+  <a href="#addtextbox">AddTextBox</a>
+  <a href="#addlabel">AddLabel</a>
+  <a href="#addseparator">AddSeparator</a>
+
+  <div class="nav-group-label">Notifications</div>
+  <a href="#notify">Cactus.Notify</a>
+
+  <div class="nav-group-label">Keybinds</div>
+  <a href="#keybinds">Global keybinds</a>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Roblox Executor UI</div>
+    <h1>Cactus<br><em>UI Library</em></h1>
+    <p>A fast, themeable UI library for Roblox executors. Tabs, subtabs, sections, toggles, sliders, dropdowns, color pickers, keybinds, notifications — all wired up with smooth animations out of the box.</p>
+    <div class="install-strip">
+      <span class="label">loadstring</span>
+      <span class="cmd" id="install-cmd">local Cactus = loadstring(game:HttpGet("YOUR_RAW_URL"))()&nbsp;</span>
+      <button onclick="copyInstall(this)">copy</button>
+    </div>
+  </div>
+
+  <!-- INSTALL -->
+  <div class="doc-section" id="install">
+    <div class="section-title">Installation</div>
+    <div class="section-sub">Host <code>CactusLib.lua</code> anywhere with a raw URL (GitHub raw, your own CDN). Load it with a single line.</div>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines" id="bl-install">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">Cactus</span> <span class="op">=</span> <span class="fn">loadstring</span><span class="op">(</span><span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span><span class="op">(</span><span class="str">"https://raw.githubusercontent.com/you/repo/main/CactusLib.lua"</span><span class="op">))()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <strong>HttpGet</strong> must be enabled in your executor. The library injects its ScreenGui into <code>CoreGui</code> and falls back to <code>PlayerGui</code> if that fails.
+    </div>
+  </div>
+
+  <!-- QUICKSTART -->
+  <div class="doc-section" id="quickstart">
+    <div class="section-title">Quick start</div>
+    <div class="section-sub">A minimal script that creates a window, one tab, one section, and a toggle.</div>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines" id="bl-qs">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">Cactus</span> <span class="op">=</span> <span class="fn">loadstring</span><span class="op">(</span><span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span><span class="op">(</span><span class="str">"YOUR_RAW_URL"</span><span class="op">))()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="kw">local</span> <span class="var">Window</span> <span class="op">=</span> <span class="var">Cactus</span><span class="op">.</span><span class="fn">CreateWindow</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Title</span>    <span class="op">=</span> <span class="str">"My Script"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Subtitle</span> <span class="op">=</span> <span class="str">"v1.0"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="kw">local</span> <span class="var">MainTab</span> <span class="op">=</span> <span class="var">Window</span><span class="op">:</span><span class="fn">AddTab</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Main"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="kw">local</span> <span class="var">Section</span> <span class="op">=</span> <span class="var">MainTab</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Combat"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">12</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Aimbot"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">13</span><span class="cl-code">    <span class="key">Default</span>  <span class="op">=</span> <span class="kw">false</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">14</span><span class="cl-code">    <span class="key">Flag</span>     <span class="op">=</span> <span class="str">"Aimbot"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">15</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">enabled</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">16</span><span class="cl-code">        <span class="fn">print</span><span class="op">(</span><span class="str">"Aimbot:"</span><span class="op">,</span> <span class="var">enabled</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">17</span><span class="cl-code">    <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">18</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLAGS -->
+  <div class="doc-section" id="flags">
+    <div class="section-title">Flags &amp; Variables</div>
+    <div class="section-sub">Flags let you read any component's current value from anywhere in your script without holding a reference to the component object. Every component that accepts a <code>Flag</code> key writes to <code>Cactus.Flags</code>.</div>
+
+    <table class="flags-table">
+      <tr><th>Variable</th><th>Type</th><th>Description</th></tr>
+      <tr>
+        <td>Cactus.Flags</td>
+        <td>table</td>
+        <td>Global key-value store updated whenever a flagged component changes. Read any flag at any time — the table is always current.</td>
+      </tr>
+      <tr>
+        <td>Cactus.Flags["YourFlag"]</td>
+        <td>any</td>
+        <td>The live value of a specific component. Type matches the component: <code>boolean</code> for Toggle, <code>number</code> for Slider, <code>string</code> or <code>table</code> for Dropdown, <code>Color3</code> for ColorPicker, <code>Enum.KeyCode</code> for Keybind, <code>string</code> for TextBox.</td>
+      </tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua — reading flags</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines" id="bl-flags">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="cmt">-- set the Flag key on any component</span></span></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"ESP"</span><span class="op">,</span> <span class="key">Flag</span> <span class="op">=</span> <span class="str">"ESP"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"><span class="cmt">-- read it anywhere</span></span></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code"><span class="kw">if</span> <span class="var">Cactus</span><span class="op">.</span><span class="var">Flags</span><span class="op">.</span><span class="var">ESP</span> <span class="kw">then</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code">    <span class="cmt">-- draw boxes</span></span></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"><span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="cmt">-- or use in a RunService loop</span></span></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"><span class="fn">game</span><span class="op">:</span><span class="fn">GetService</span><span class="op">(</span><span class="str">"RunService"</span><span class="op">).</span><span class="var">Heartbeat</span><span class="op">:</span><span class="fn">Connect</span><span class="op">(</span><span class="kw">function</span><span class="op">()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code">    <span class="kw">local</span> <span class="var">fov</span> <span class="op">=</span> <span class="var">Cactus</span><span class="op">.</span><span class="var">Flags</span><span class="op">.</span><span class="var">AimbotFOV</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">12</span><span class="cl-code">    <span class="cmt">-- use fov directly</span></span></div>
+        <div class="cl"><span class="cl-num">13</span><span class="cl-code"><span class="kw">end</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <strong>Tip:</strong> Flags are set immediately when a component is created (using <code>Default</code>) and updated on every user interaction. You don't need to wait for a callback.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CREATE WINDOW -->
+  <div class="doc-section" id="createwindow">
+    <div class="section-title">CreateWindow</div>
+    <div class="section-sub">Creates the root UI frame. Returns a Window object. Call this once at the top of your script.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Title</td><td><span class="type-tag">string</span></td><td><span class="opt">"Cactus"</span></td><td>Left-side header text. Shown in white.</td></tr>
+      <tr><td>Subtitle</td><td><span class="type-tag">string</span></td><td><span class="opt">""</span></td><td>Shown after the title in a muted colour. Good for version strings.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">Window</span> <span class="op">=</span> <span class="var">Cactus</span><span class="op">.</span><span class="fn">CreateWindow</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Title</span>    <span class="op">=</span> <span class="str">"Cactus"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Subtitle</span> <span class="op">=</span> <span class="str">"v2.1"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINDOW METHODS -->
+  <div class="doc-section" id="window-methods">
+    <div class="section-title">Window methods</div>
+    <div class="section-sub">Methods on the object returned by <code>CreateWindow</code>.</div>
+
+    <h3 class="method-title">Window:Open() <span class="badge ret">void</span></h3>
+    <div class="method-desc">Animates the window back in. Equivalent to pressing <kbd>RightShift</kbd>.</div>
+
+    <h3 class="method-title">Window:Close() <span class="badge ret">void</span></h3>
+    <div class="method-desc">Shrinks the window to 0×0 with a spring animation. The GUI still exists — call <code>Open</code> to bring it back. Toggle with <kbd>RightShift</kbd>.</div>
+
+    <h3 class="method-title">Window:Destroy() <span class="badge ret">void</span></h3>
+    <div class="method-desc">Permanently destroys the ScreenGui. Nothing in the window will work after this.</div>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Window</span><span class="op">:</span><span class="fn">Close</span><span class="op">()</span>    <span class="cmt">-- hide</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"><span class="var">Window</span><span class="op">:</span><span class="fn">Open</span><span class="op">()</span>     <span class="cmt">-- show</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="var">Window</span><span class="op">:</span><span class="fn">Destroy</span><span class="op">()</span>  <span class="cmt">-- nuke</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ADD TAB -->
+  <div class="doc-section" id="addtab">
+    <div class="section-title">AddTab</div>
+    <div class="section-sub">Adds a sidebar tab. Returns a Tab object. Tabs slide in/out when switched.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Tab"</span></td><td>Label shown under the icon in the sidebar.</td></tr>
+      <tr><td>Icon</td><td><span class="type-tag">string</span></td><td><span class="opt">rbxassetid://…</span></td><td>Roblox asset ID for the 22×22 icon image.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">MainTab</span> <span class="op">=</span> <span class="var">Window</span><span class="op">:</span><span class="fn">AddTab</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span> <span class="op">=</span> <span class="str">"Main"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Icon</span> <span class="op">=</span> <span class="str">"rbxassetid://80869096876893"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD SUBTAB -->
+  <div class="doc-section" id="addsubtab">
+    <div class="section-title">AddSubTab</div>
+    <div class="section-sub">Adds a horizontal sub-tab row inside a tab's header. Each sub-tab has its own scrollable page. Useful for splitting a tab into categories (e.g. Aimbot / Visuals / Misc).</div>
+
+    <table class="params-table">
+      <tr><th>Arg</th><th>Type</th><th>Description</th></tr>
+      <tr><td>name</td><td><span class="type-tag">string</span></td><td>The sub-tab label text.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">AimbotSub</span> <span class="op">=</span> <span class="var">MainTab</span><span class="op">:</span><span class="fn">AddSubTab</span><span class="op">(</span><span class="str">"Aimbot"</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"><span class="kw">local</span> <span class="var">ESPSub</span>    <span class="op">=</span> <span class="var">MainTab</span><span class="op">:</span><span class="fn">AddSubTab</span><span class="op">(</span><span class="str">"ESP"</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="kw">local</span> <span class="var">Section</span>  <span class="op">=</span> <span class="var">AimbotSub</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Settings"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <strong>Note:</strong> If you use <code>AddSubTab</code> on a tab, add sections onto the sub-tab object — not the tab directly. Mixing both on the same tab is not supported.
+    </div>
+  </div>
+
+  <!-- ADD SECTION -->
+  <div class="doc-section" id="addsection">
+    <div class="section-title">AddSection</div>
+    <div class="section-sub">Creates a named container inside a tab or sub-tab. Sections lay out side-by-side horizontally. Each one auto-expands vertically to fit its components.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Section"</span></td><td>Title shown in the section header bar.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">Left</span>  <span class="op">=</span> <span class="var">Tab</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Combat"</span>  <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"><span class="kw">local</span> <span class="var">Right</span> <span class="op">=</span> <span class="var">Tab</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Movement"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ADD TOGGLE -->
+  <div class="doc-section" id="addtoggle">
+    <div class="section-title">AddToggle</div>
+    <div class="section-sub">A boolean checkbox. Lights up with the accent colour when enabled.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Toggle"</span></td><td>Label text shown next to the checkbox.</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">boolean</span></td><td><span class="opt">false</span></td><td>Initial state. Applied immediately on creation.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key name in <code>Cactus.Flags</code>. Stores a <code>boolean</code>.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with <code>(boolean)</code> whenever the value changes.</td></tr>
+    </table>
+
+    <h3 class="method-title">Methods</h3>
+    <table class="params-table">
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td>:Set(bool)</td><td>Programmatically set the value. Fires the callback.</td></tr>
+      <tr><td>:Get()</td><td>Returns the current <code>boolean</code> value.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">ESPToggle</span> <span class="op">=</span> <span class="var">Section</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"ESP"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Default</span>  <span class="op">=</span> <span class="kw">false</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Flag</span>     <span class="op">=</span> <span class="str">"ESP"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">v</span><span class="op">)</span> <span class="fn">print</span><span class="op">(</span><span class="str">"ESP:"</span><span class="op">,</span> <span class="var">v</span><span class="op">)</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="var">ESPToggle</span><span class="op">:</span><span class="fn">Set</span><span class="op">(</span><span class="kw">true</span><span class="op">)</span>   <span class="cmt">-- force on</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="fn">print</span><span class="op">(</span><span class="var">ESPToggle</span><span class="op">:</span><span class="fn">Get</span><span class="op">())</span> <span class="cmt">-- true</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD SLIDER -->
+  <div class="doc-section" id="addslider">
+    <div class="section-title">AddSlider</div>
+    <div class="section-sub">A draggable numeric range input. Click and drag the track to set a value.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Slider"</span></td><td>Label above the track.</td></tr>
+      <tr><td>Min</td><td><span class="type-tag">number</span></td><td><span class="opt">0</span></td><td>Minimum value (inclusive).</td></tr>
+      <tr><td>Max</td><td><span class="type-tag">number</span></td><td><span class="opt">100</span></td><td>Maximum value (inclusive).</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">number</span></td><td><span class="opt">Min</span></td><td>Starting value. Clamped to [Min, Max].</td></tr>
+      <tr><td>Suffix</td><td><span class="type-tag">string</span></td><td><span class="opt">""</span></td><td>Appended to the value display. E.g. <code>"%"</code>, <code>" ms"</code>.</td></tr>
+      <tr><td>Precision</td><td><span class="type-tag">number</span></td><td><span class="opt">nil</span></td><td>Snap interval. <code>0.1</code> snaps to one decimal place. <code>nil</code> rounds to integers.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key in <code>Cactus.Flags</code>. Stores a <code>number</code>.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with <code>(number)</code> on every drag tick.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">FOVSlider</span> <span class="op">=</span> <span class="var">Section</span><span class="op">:</span><span class="fn">AddSlider</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>      <span class="op">=</span> <span class="str">"FOV"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Min</span>       <span class="op">=</span> <span class="num">10</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Max</span>       <span class="op">=</span> <span class="num">360</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Default</span>   <span class="op">=</span> <span class="num">90</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code">    <span class="key">Suffix</span>    <span class="op">=</span> <span class="str">"°"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code">    <span class="key">Flag</span>      <span class="op">=</span> <span class="str">"AimbotFOV"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code">    <span class="key">Callback</span>  <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">v</span><span class="op">)</span> <span class="fn">print</span><span class="op">(</span><span class="str">"FOV:"</span><span class="op">,</span> <span class="var">v</span><span class="op">)</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code"><span class="var">FOVSlider</span><span class="op">:</span><span class="fn">Set</span><span class="op">(</span><span class="num">120</span><span class="op">)</span>   <span class="cmt">-- programmatic set</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">12</span><span class="cl-code"><span class="fn">print</span><span class="op">(</span><span class="var">FOVSlider</span><span class="op">:</span><span class="fn">Get</span><span class="op">())</span> <span class="cmt">-- 120</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD DROPDOWN -->
+  <div class="doc-section" id="adddropdown">
+    <div class="section-title">AddDropdown</div>
+    <div class="section-sub">A collapsible option picker. Supports single-select and multi-select modes.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Dropdown"</span></td><td>Label shown above the dropdown box.</td></tr>
+      <tr><td>Items</td><td><span class="type-tag">table</span></td><td><span class="opt">{}</span></td><td>Array of strings. Each becomes a selectable option.</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Pre-selected option. Must match an item in <code>Items</code>.</td></tr>
+      <tr><td>Multi</td><td><span class="type-tag">boolean</span></td><td><span class="opt">false</span></td><td>Allow multiple selections. Flag stores a <code>table</code> of strings when true.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key in <code>Cactus.Flags</code>. Stores <code>string</code> (single) or <code>table</code> (multi).</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with the current value on change.</td></tr>
+    </table>
+
+    <h3 class="method-title">Methods</h3>
+    <table class="params-table">
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td>:Set(value)</td><td>Set the selected value programmatically.</td></tr>
+      <tr><td>:Get()</td><td>Returns current selection.</td></tr>
+      <tr><td>:SetItems(table)</td><td>Replace the item list. Rebuilds the dropdown in place.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">BoneDD</span> <span class="op">=</span> <span class="var">Section</span><span class="op">:</span><span class="fn">AddDropdown</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Target Bone"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Items</span>    <span class="op">=</span> <span class="op">{</span> <span class="str">"Head"</span><span class="op">,</span> <span class="str">"Neck"</span><span class="op">,</span> <span class="str">"Torso"</span> <span class="op">},</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Default</span>  <span class="op">=</span> <span class="str">"Head"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Flag</span>     <span class="op">=</span> <span class="str">"AimbotBone"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">v</span><span class="op">)</span> <span class="fn">print</span><span class="op">(</span><span class="str">"Bone:"</span><span class="op">,</span> <span class="var">v</span><span class="op">)</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="cmt">-- multi-select example</span></span></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddDropdown</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code">    <span class="key">Name</span>  <span class="op">=</span> <span class="str">"ESP Teams"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">12</span><span class="cl-code">    <span class="key">Items</span> <span class="op">=</span> <span class="op">{</span> <span class="str">"Enemies"</span><span class="op">,</span> <span class="str">"Team"</span><span class="op">,</span> <span class="str">"All"</span> <span class="op">},</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">13</span><span class="cl-code">    <span class="key">Multi</span> <span class="op">=</span> <span class="kw">true</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">14</span><span class="cl-code">    <span class="key">Flag</span>  <span class="op">=</span> <span class="str">"ESPTeams"</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">15</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD BUTTON -->
+  <div class="doc-section" id="addbutton">
+    <div class="section-title">AddButton</div>
+    <div class="section-sub">A clickable button with a ripple effect. Optionally tinted with a custom colour.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Button"</span></td><td>Text shown inside the button.</td></tr>
+      <tr><td>Color</td><td><span class="type-tag">Color3</span></td><td><span class="opt">nil</span></td><td>Optional tint. Button background and label take this colour. No tint = default grey style.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with no arguments on click.</td></tr>
+    </table>
+
+    <h3 class="method-title">Methods</h3>
+    <table class="params-table">
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td>:Rename(string)</td><td>Change the button label text.</td></tr>
+      <tr><td>:SetColor(Color3)</td><td>Change the tint colour at runtime.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddButton</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Teleport to Spawn"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">()</span> <span class="cmt">--[[ do the thing ]]</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="cmt">-- tinted variant</span></span></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddButton</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Delete Character"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code">    <span class="key">Color</span>    <span class="op">=</span> <span class="typ">Color3</span><span class="op">.</span><span class="fn">fromRGB</span><span class="op">(</span><span class="num">210</span><span class="op">,</span> <span class="num">70</span><span class="op">,</span> <span class="num">70</span><span class="op">),</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">()</span> <span class="fn">print</span><span class="op">(</span><span class="str">"rip"</span><span class="op">)</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD KEYBIND -->
+  <div class="doc-section" id="addkeybind">
+    <div class="section-title">AddKeybind</div>
+    <div class="section-sub">A key-capture input. Click the box to enter listening mode, then press any key to bind it. Fires the callback globally whenever that key is pressed.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Keybind"</span></td><td>Label text.</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">Enum.KeyCode</span></td><td><span class="opt">Unknown</span></td><td>Starting key. Use <code>Enum.KeyCode.X</code> syntax.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key in <code>Cactus.Flags</code>. Stores an <code>Enum.KeyCode</code>.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with <code>(Enum.KeyCode)</code> every time the bound key is pressed (not on reassign).</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddKeybind</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Toggle ESP"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Default</span>  <span class="op">=</span> <span class="typ">Enum</span><span class="op">.</span><span class="typ">KeyCode</span><span class="op">.</span><span class="var">F</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Flag</span>     <span class="op">=</span> <span class="str">"ESPKey"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">key</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code">        <span class="fn">print</span><span class="op">(</span><span class="str">"key pressed:"</span><span class="op">,</span> <span class="var">key</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code">    <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Note:</strong> The callback fires on every keypress, not just when reassigning. It does not fire while the input box is in listening mode.
+    </div>
+  </div>
+
+  <!-- ADD COLOR PICKER -->
+  <div class="doc-section" id="addcolorpicker">
+    <div class="section-title">AddColorPicker</div>
+    <div class="section-sub">A compact HSV color picker. Click the preview swatch to open the picker panel. Supports saturation/value field drag, hue bar drag, and direct hex input.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Color"</span></td><td>Label text.</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">Color3</span></td><td><span class="opt">Color3.new(1,1,1)</span></td><td>Initial colour. Parsed into HSV on creation.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key in <code>Cactus.Flags</code>. Stores a <code>Color3</code>.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with <code>(Color3)</code> continuously while dragging.</td></tr>
+    </table>
+
+    <h3 class="method-title">Methods</h3>
+    <table class="params-table">
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td>:Set(Color3)</td><td>Update the colour programmatically. Repaints the picker.</td></tr>
+      <tr><td>:Get()</td><td>Returns the current <code>Color3</code>.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">ESPColor</span> <span class="op">=</span> <span class="var">Section</span><span class="op">:</span><span class="fn">AddColorPicker</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>     <span class="op">=</span> <span class="str">"Box Color"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Default</span>  <span class="op">=</span> <span class="typ">Color3</span><span class="op">.</span><span class="fn">fromRGB</span><span class="op">(</span><span class="num">255</span><span class="op">,</span> <span class="num">50</span><span class="op">,</span> <span class="num">50</span><span class="op">),</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Flag</span>     <span class="op">=</span> <span class="str">"ESPBoxColor"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Callback</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">c</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code">        <span class="cmt">-- c is a Color3 — apply to your drawing objects</span></span></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code">    <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"><span class="fn">print</span><span class="op">(</span><span class="var">ESPColor</span><span class="op">:</span><span class="fn">Get</span><span class="op">())</span> <span class="cmt">-- Color3</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD TEXTBOX -->
+  <div class="doc-section" id="addtextbox">
+    <div class="section-title">AddTextBox</div>
+    <div class="section-sub">A text input field. Fires the callback when the user presses Enter or clicks away.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Name</td><td><span class="type-tag">string</span></td><td><span class="opt">"Input"</span></td><td>Label above the field.</td></tr>
+      <tr><td>Placeholder</td><td><span class="type-tag">string</span></td><td><span class="opt">"Enter text…"</span></td><td>Greyed hint text shown when the field is empty.</td></tr>
+      <tr><td>Default</td><td><span class="type-tag">string</span></td><td><span class="opt">""</span></td><td>Pre-filled text on creation.</td></tr>
+      <tr><td>Flag</td><td><span class="type-tag">string</span></td><td><span class="opt">nil</span></td><td>Key in <code>Cactus.Flags</code>. Stores a <code>string</code>.</td></tr>
+      <tr><td>Callback</td><td><span class="type-tag">function</span></td><td><span class="opt">nil</span></td><td>Called with <code>(string)</code> on focus lost.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddTextBox</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Name</span>        <span class="op">=</span> <span class="str">"Target Username"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Placeholder</span> <span class="op">=</span> <span class="str">"Enter name..."</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Flag</span>        <span class="op">=</span> <span class="str">"TargetName"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Callback</span>    <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="var">text</span><span class="op">)</span> <span class="fn">print</span><span class="op">(</span><span class="var">text</span><span class="op">)</span> <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD LABEL -->
+  <div class="doc-section" id="addlabel">
+    <div class="section-title">AddLabel</div>
+    <div class="section-sub">A read-only text element. Supports RichText for coloured or styled spans.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Text</td><td><span class="type-tag">string</span></td><td><span class="opt">""</span></td><td>Display text. RichText tags are supported (e.g. <code>&lt;font color="#ff0000"&gt;</code>).</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">StatusLabel</span> <span class="op">=</span> <span class="var">Section</span><span class="op">:</span><span class="fn">AddLabel</span><span class="op">({</span> <span class="key">Text</span> <span class="op">=</span> <span class="str">"Status: idle"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="cmt">-- update later</span></span></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"><span class="var">StatusLabel</span><span class="op">:</span><span class="fn">Set</span><span class="op">(</span><span class="str">'Status: &lt;font color="#6be09e"&gt;running&lt;/font&gt;'</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD SEPARATOR -->
+  <div class="doc-section" id="addseparator">
+    <div class="section-title">AddSeparator</div>
+    <div class="section-sub">Inserts a thin horizontal rule to visually group components inside a section. No options.</div>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Aimbot"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddSeparator</span><span class="op">()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="var">Section</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Triggerbot"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- NOTIFY -->
+  <div class="doc-section" id="notify">
+    <div class="section-title">Cactus.Notify</div>
+    <div class="section-sub">Sends a toast notification to the bottom-right corner. Stacks cleanly. Auto-dismisses after <code>Duration</code> seconds with a depleting progress bar.</div>
+
+    <table class="params-table">
+      <tr><th>Key</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td>Title</td><td><span class="type-tag">string</span></td><td><span class="opt">"Cactus"</span></td><td>Bold heading of the notification.</td></tr>
+      <tr><td>Description</td><td><span class="type-tag">string</span></td><td><span class="opt">""</span></td><td>Optional body text below the title. Wraps to multiple lines.</td></tr>
+      <tr><td>Duration</td><td><span class="type-tag">number</span></td><td><span class="opt">4</span></td><td>Seconds before the notification slides out.</td></tr>
+      <tr><td>Type</td><td><span class="type-tag">string</span></td><td><span class="opt">"Info"</span></td><td>Controls the accent strip colour. One of: <code>"Info"</code> <code>"Success"</code> <code>"Warning"</code> <code>"Error"</code>.</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="var">Cactus</span><span class="op">.</span><span class="fn">Notify</span><span class="op">({</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code">    <span class="key">Title</span>       <span class="op">=</span> <span class="str">"Script loaded"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code">    <span class="key">Description</span> <span class="op">=</span> <span class="str">"v2.1 — all modules ready"</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code">    <span class="key">Duration</span>    <span class="op">=</span> <span class="num">5</span><span class="op">,</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code">    <span class="key">Type</span>        <span class="op">=</span> <span class="str">"Success"</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="var">Cactus</span><span class="op">.</span><span class="fn">Notify</span><span class="op">({</span> <span class="key">Title</span> <span class="op">=</span> <span class="str">"Detected"</span><span class="op">,</span> <span class="key">Type</span> <span class="op">=</span> <span class="str">"Error"</span><span class="op">,</span> <span class="key">Duration</span> <span class="op">=</span> <span class="num">8</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"><span class="var">Cactus</span><span class="op">.</span><span class="fn">Notify</span><span class="op">({</span> <span class="key">Title</span> <span class="op">=</span> <span class="str">"Low FOV"</span><span class="op">,</span>  <span class="key">Type</span> <span class="op">=</span> <span class="str">"Warning"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYBINDS -->
+  <div class="doc-section" id="keybinds">
+    <div class="section-title">Global keybinds</div>
+    <div class="section-sub">These are always active regardless of which tab is open.</div>
+
+    <table class="flags-table">
+      <tr><th>Key</th><th>Action</th></tr>
+      <tr><td>RightShift</td><td>Toggle the window open/closed. Fires <code>Window:Open()</code> or <code>Window:Close()</code>.</td></tr>
+      <tr><td>Minimize button</td><td>Collapses the window to its header bar only. Click the yellow dot.</td></tr>
+      <tr><td>Close button</td><td>Closes the window (same as <code>Window:Close()</code>). Red dot in header.</td></tr>
+      <tr><td>Header drag</td><td>Click and drag the header bar to reposition the window anywhere on screen.</td></tr>
+    </table>
+
+    <div class="callout tip">
+      <strong>Custom toggle key:</strong> Override the default by connecting <code>UserInputService.InputBegan</code> yourself and calling <code>Window:Close()</code> / <code>Window:Open()</code> on your chosen key.
+    </div>
+  </div>
+
+  <!-- FULL EXAMPLE -->
+  <div class="divider"></div>
+  <div class="doc-section" id="full-example">
+    <div class="section-title">Full example</div>
+    <div class="section-sub">A realistic script using most of the library's features in one go.</div>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-lang">lua — full script</span><button class="copy-all" onclick="copyBlock(this)">copy all</button></div>
+      <div class="code-lines" id="bl-full">
+        <div class="cl"><span class="cl-num">1</span><span class="cl-code"><span class="kw">local</span> <span class="var">Cactus</span> <span class="op">=</span> <span class="fn">loadstring</span><span class="op">(</span><span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span><span class="op">(</span><span class="str">"YOUR_RAW_URL"</span><span class="op">))()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">2</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">3</span><span class="cl-code"><span class="kw">local</span> <span class="var">W</span> <span class="op">=</span> <span class="var">Cactus</span><span class="op">.</span><span class="fn">CreateWindow</span><span class="op">({</span> <span class="key">Title</span> <span class="op">=</span> <span class="str">"Cactus"</span><span class="op">,</span> <span class="key">Subtitle</span> <span class="op">=</span> <span class="str">"v1.0"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">4</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">5</span><span class="cl-code"><span class="cmt">-- Tabs</span></span></div>
+        <div class="cl"><span class="cl-num">6</span><span class="cl-code"><span class="kw">local</span> <span class="var">Combat</span>   <span class="op">=</span> <span class="var">W</span><span class="op">:</span><span class="fn">AddTab</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Combat"</span>   <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">7</span><span class="cl-code"><span class="kw">local</span> <span class="var">Visuals</span>  <span class="op">=</span> <span class="var">W</span><span class="op">:</span><span class="fn">AddTab</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Visuals"</span>  <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">8</span><span class="cl-code"><span class="kw">local</span> <span class="var">Settings</span> <span class="op">=</span> <span class="var">W</span><span class="op">:</span><span class="fn">AddTab</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Settings"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">9</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">10</span><span class="cl-code"><span class="cmt">-- SubTabs on Combat</span></span></div>
+        <div class="cl"><span class="cl-num">11</span><span class="cl-code"><span class="kw">local</span> <span class="var">AimSub</span> <span class="op">=</span> <span class="var">Combat</span><span class="op">:</span><span class="fn">AddSubTab</span><span class="op">(</span><span class="str">"Aimbot"</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">12</span><span class="cl-code"><span class="kw">local</span> <span class="var">TrigSub</span> <span class="op">=</span> <span class="var">Combat</span><span class="op">:</span><span class="fn">AddSubTab</span><span class="op">(</span><span class="str">"Trigger"</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">13</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">14</span><span class="cl-code"><span class="kw">local</span> <span class="var">AimSec</span> <span class="op">=</span> <span class="var">AimSub</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"Aimbot"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">15</span><span class="cl-code"><span class="var">AimSec</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Enabled"</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"AimbotOn"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">16</span><span class="cl-code"><span class="var">AimSec</span><span class="op">:</span><span class="fn">AddSlider</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"FOV"</span><span class="op">,</span> <span class="key">Min</span><span class="op">=</span><span class="num">5</span><span class="op">,</span> <span class="key">Max</span><span class="op">=</span><span class="num">360</span><span class="op">,</span> <span class="key">Default</span><span class="op">=</span><span class="num">90</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"AimbotFOV"</span><span class="op">,</span> <span class="key">Suffix</span><span class="op">=</span><span class="str">"°"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">17</span><span class="cl-code"><span class="var">AimSec</span><span class="op">:</span><span class="fn">AddDropdown</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Bone"</span><span class="op">,</span> <span class="key">Items</span><span class="op">={</span><span class="str">"Head"</span><span class="op">,</span><span class="str">"Neck"</span><span class="op">,</span><span class="str">"Torso"</span><span class="op">},</span> <span class="key">Default</span><span class="op">=</span><span class="str">"Head"</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"AimBone"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">18</span><span class="cl-code"><span class="var">AimSec</span><span class="op">:</span><span class="fn">AddKeybind</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Hold Key"</span><span class="op">,</span> <span class="key">Default</span><span class="op">=</span><span class="typ">Enum</span><span class="op">.</span><span class="typ">KeyCode</span><span class="op">.</span><span class="var">Q</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"AimKey"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">19</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">20</span><span class="cl-code"><span class="cmt">-- Visuals section</span></span></div>
+        <div class="cl"><span class="cl-num">21</span><span class="cl-code"><span class="kw">local</span> <span class="var">VisSec</span> <span class="op">=</span> <span class="var">Visuals</span><span class="op">:</span><span class="fn">AddSection</span><span class="op">({</span> <span class="key">Name</span> <span class="op">=</span> <span class="str">"ESP"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">22</span><span class="cl-code"><span class="var">VisSec</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Boxes"</span><span class="op">,</span>  <span class="key">Flag</span><span class="op">=</span><span class="str">"ESPBoxes"</span>  <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">23</span><span class="cl-code"><span class="var">VisSec</span><span class="op">:</span><span class="fn">AddToggle</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Tracers"</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"ESPTracers"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">24</span><span class="cl-code"><span class="var">VisSec</span><span class="op">:</span><span class="fn">AddColorPicker</span><span class="op">({</span> <span class="key">Name</span><span class="op">=</span><span class="str">"Box Color"</span><span class="op">,</span> <span class="key">Flag</span><span class="op">=</span><span class="str">"ESPColor"</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">25</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">26</span><span class="cl-code"><span class="cmt">-- read flags anywhere</span></span></div>
+        <div class="cl"><span class="cl-num">27</span><span class="cl-code"><span class="fn">game</span><span class="op">:</span><span class="fn">GetService</span><span class="op">(</span><span class="str">"RunService"</span><span class="op">).</span><span class="var">Heartbeat</span><span class="op">:</span><span class="fn">Connect</span><span class="op">(</span><span class="kw">function</span><span class="op">()</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">28</span><span class="cl-code">    <span class="kw">if</span> <span class="var">Cactus</span><span class="op">.</span><span class="var">Flags</span><span class="op">.</span><span class="var">AimbotOn</span> <span class="kw">then</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">29</span><span class="cl-code">        <span class="cmt">-- run aimbot with Cactus.Flags.AimbotFOV and Cactus.Flags.AimBone</span></span></div>
+        <div class="cl"><span class="cl-num">30</span><span class="cl-code">    <span class="kw">end</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">31</span><span class="cl-code"><span class="kw">end</span><span class="op">)</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+        <div class="cl"><span class="cl-num">32</span><span class="cl-code"></span></div>
+        <div class="cl"><span class="cl-num">33</span><span class="cl-code"><span class="var">Cactus</span><span class="op">.</span><span class="fn">Notify</span><span class="op">({</span> <span class="key">Title</span><span class="op">=</span><span class="str">"Loaded"</span><span class="op">,</span> <span class="key">Type</span><span class="op">=</span><span class="str">"Success"</span><span class="op">,</span> <span class="key">Duration</span><span class="op">=</span><span class="num">3</span> <span class="op">})</span></span><button class="cl-copy" onclick="copyLine(this)">copy</button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function copyLine(btn) {
+    const code = btn.previousElementSibling.innerText
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'ok'
+      btn.classList.add('ok')
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('ok') }, 1200)
+    })
+  }
+
+  function copyBlock(btn) {
+    const block = btn.closest('.code-block')
+    const lines = block.querySelectorAll('.cl-code')
+    const text = Array.from(lines).map(l => l.innerText).join('\n')
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!'
+      btn.classList.add('copied')
+      setTimeout(() => { btn.textContent = 'copy all'; btn.classList.remove('copied') }, 1400)
+    })
+  }
+
+  function copyInstall(btn) {
+    const text = `local Cactus = loadstring(game:HttpGet("YOUR_RAW_URL"))()`
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!'
+      btn.classList.add('copied')
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied') }, 1400)
+    })
+  }
+
+  // active nav on scroll
+  const sections = document.querySelectorAll('.doc-section')
+  const navLinks = document.querySelectorAll('nav a')
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id)
+        })
+      }
+    })
+  }, { rootMargin: '-20% 0px -70% 0px' })
+
+  sections.forEach(s => obs.observe(s))
+</script>
+</body>
+</html>
